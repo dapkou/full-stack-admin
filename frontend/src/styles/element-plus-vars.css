@@ -1,0 +1,191 @@
+/* =========================================================
+   Element Plus tokens
+   ========================================================= */
+:root {
+  --el-color-primary: hsl(var(--primary));
+  --el-color-success: hsl(var(--success));
+  --el-color-warning: hsl(var(--warning));
+  --el-color-danger: hsl(var(--danger));
+  --el-color-info: hsl(var(--secondary));
+
+  --el-bg-color: hsl(var(--background));
+  --el-bg-color-overlay: hsl(var(--popover));
+
+  --el-text-color-primary: hsl(var(--foreground));
+  --el-text-color-regular: hsl(var(--foreground) / 0.85);
+  --el-text-color-secondary: hsl(var(--muted-foreground));
+  --el-text-color-placeholder: hsl(var(--muted-foreground) / 0.8);
+
+  --el-border-color: hsl(var(--border));
+  --el-fill-color: hsl(var(--muted));
+
+  --el-box-shadow-light: var(--shadow-1);
+  --el-box-shadow: var(--shadow-2);
+  --el-box-shadow-dark: var(--shadow-3);
+
+  --radius-card: var(--radius-3);
+}
+
+.dark {
+  --el-color-primary: hsl(var(--primary));
+  --el-color-success: hsl(var(--success));
+  --el-color-warning: hsl(var(--warning));
+  --el-color-danger: hsl(var(--danger));
+  --el-color-info: hsl(var(--secondary));
+
+  --el-bg-color: hsl(var(--background));
+  --el-bg-color-overlay: hsl(var(--popover));
+
+  --el-text-color-primary: hsl(var(--foreground));
+  --el-text-color-regular: hsl(var(--foreground) / 0.85);
+  --el-text-color-secondary: hsl(var(--muted-foreground));
+  --el-text-color-placeholder: hsl(var(--muted-foreground) / 0.85);
+
+  --el-border-color: hsl(var(--border));
+  --el-fill-color: hsl(var(--muted));
+}
+
+/* remove button gap */
+.el-button + .el-button {
+  margin-left: 0;
+}
+
+/* =========================================================
+   Card
+   ========================================================= */
+.el-card {
+  --el-card-bg-color: hsl(var(--card));
+  --el-fill-color-blank: hsl(var(--card));
+  --el-border-color-light: hsl(var(--border));
+  --el-text-color-primary: hsl(var(--foreground));
+
+  border-radius: var(--radius-card);
+  background: hsl(var(--card));
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.el-card__header {
+  background: hsl(var(--muted) / 0.35);
+}
+
+.el-card.is-hover-shadow:hover {
+  box-shadow: var(--shadow-2);
+}
+
+.el-card.is-always-shadow {
+  box-shadow: var(--shadow-1);
+}
+
+/* =========================================================
+   Table
+   ========================================================= */
+.el-table {
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+
+  --el-table-border-color: hsl(var(--border));
+  --el-table-row-hover-bg-color: hsl(var(--accent));
+  --el-table-current-row-bg-color: hsl(var(--accent));
+
+  --el-table-header-bg-color: hsl(var(--muted) / 0.35);
+  --el-table-header-text-color: hsl(var(--muted-foreground));
+  --el-table-text-color: hsl(var(--foreground));
+
+  background: transparent;
+  color: hsl(var(--foreground));
+}
+
+.el-table__inner-wrapper::before {
+  display: none;
+}
+
+/* header */
+.el-table__header th.el-table__cell {
+  background: hsl(var(--muted) / 0.35);
+  border-bottom: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+/* cell */
+.el-table__cell {
+  border-bottom: 1px solid hsl(var(--border));
+  background: transparent;
+}
+
+/* hover */
+.el-table__body tr:hover > td.el-table__cell,
+.el-table__body tr.current-row > td.el-table__cell {
+  background: hsl(var(--accent));
+}
+
+/* striped */
+.el-table--striped
+  .el-table__body
+  tr.el-table__row--striped
+  > td.el-table__cell {
+  background: hsl(var(--muted) / 0.25);
+}
+
+/* empty */
+.el-table__empty-block {
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+}
+
+/* sort icon */
+.el-table .caret-wrapper .sort-caret {
+  border-top-color: hsl(var(--muted-foreground));
+  border-bottom-color: hsl(var(--muted-foreground));
+}
+
+/* scrollbar */
+.el-scrollbar__thumb {
+  background: hsl(var(--border));
+  border-radius: 9999px;
+}
+.el-scrollbar__thumb:hover {
+  background: hsl(var(--foreground) / 0.35);
+}
+
+/* =========================================================
+   Dialog
+   ========================================================= */
+.el-dialog {
+  background: hsl(var(--popover));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+
+.el-dialog__body {
+  color: hsl(var(--foreground));
+}
+
+.el-overlay {
+  background: hsl(var(--background) / 0.55);
+  backdrop-filter: blur(4px);
+}
+
+/* =========================================================
+   App custom styles
+   ========================================================= */
+
+/* dropdown danger */
+.app-dropdown .app-dropdown-item.app-dropdown-item--danger {
+  color: var(--el-color-danger);
+}
+
+.app-dropdown .app-dropdown-item.app-dropdown-item--danger:hover,
+.app-dropdown .app-dropdown-item.app-dropdown-item--danger:focus {
+  background-color: color-mix(in srgb, var(--el-color-danger) 10%, transparent);
+}
+
+/* card muted */
+.el-card.app-card--muted {
+  background: hsl(var(--muted) / 0.35);
+}

@@ -1,0 +1,379 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* =========================================================
+   Tailwind v4 Tokens
+   ========================================================= */
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+
+  --color-danger: hsl(var(--danger));
+  --color-danger-foreground: hsl(var(--danger-foreground));
+
+  --color-surface: hsl(var(--surface));
+  --color-surface-foreground: hsl(var(--surface-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+
+  --color-info-soft: hsl(var(--info-soft));
+  --color-info-soft-foreground: hsl(var(--info-soft-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-ring: hsl(var(--ring));
+
+  --shadow-1: 0 1px 2px hsl(var(--foreground) / 0.06);
+  --shadow-2: 0 4px 12px hsl(var(--foreground) / 0.08);
+  --shadow-3: 0 10px 30px hsl(var(--foreground) / 0.12);
+
+  --radius-1: 0.375rem;
+  --radius-2: 0.5rem;
+  --radius-3: 0.75rem;
+  --radius-4: 1rem;
+  --radius-5: 1.25rem;
+  --radius-6: 1.5rem;
+}
+
+/* =========================================================
+   Base (CSS variables + global defaults)
+   ========================================================= */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    --primary: 222 89% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 16% 47%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 211 100% 96%;
+    --accent-foreground: 222 47% 11%;
+
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --danger: 0 84% 60%;
+    --danger-foreground: 0 0% 100%;
+
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 100%;
+
+    --info-soft: 199 89% 48% / 0.12;
+    --info-soft-foreground: 199 89% 32%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --surface: 0 0% 100%;
+    --surface-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --border: 214 32% 91%;
+    --ring: var(--primary);
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 217 40% 26%;
+    --accent-foreground: 210 40% 98%;
+
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 0%;
+
+    --danger: 0 72% 51%;
+    --danger-foreground: 0 0% 100%;
+
+    --info: 199 89% 55%;
+    --info-foreground: 222 47% 11%;
+
+    --info-soft: 199 89% 55% / 0.18;
+    --info-soft-foreground: 199 89% 70%;
+
+    --popover: 222 30% 14%;
+    --popover-foreground: 210 40% 98%;
+
+    --surface: 222 30% 14%;
+    --surface-foreground: 210 40% 98%;
+
+    --muted: 217 28% 18%;
+    --muted-foreground: 215 20% 70%;
+
+    --border: 217 17% 25%;
+    --ring: var(--primary);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Scrollbar (global) */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.6);
+  }
+}
+
+/* =========================================================
+   Utilities (low-level building blocks)
+   ========================================================= */
+
+/* Shared focus ring */
+@utility focus-ring {
+  @apply focus:outline-none focus-visible:ring-1 focus-visible:ring-ring
+    focus-visible:ring-offset-1 focus-visible:ring-offset-background;
+}
+
+/* Button primitives */
+@utility ui-btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium
+    border border-transparent
+    transition-[background-color,color,border-color,box-shadow,transform] duration-150
+    disabled:pointer-events-none disabled:opacity-50
+    active:scale-[0.98]
+    focus-ring;
+}
+
+/* sizes */
+@utility ui-btn-sm {
+  @apply h-8 px-2.5;
+}
+@utility ui-btn-md {
+  @apply h-9 px-3;
+}
+@utility ui-btn-lg {
+  @apply h-10 px-4;
+}
+@utility ui-btn-icon {
+  @apply h-9 w-9 p-0;
+}
+
+/* variants: solid */
+@utility ui-btn-primary {
+  @apply bg-primary text-primary-foreground hover:opacity-70 active:bg-primary/80 active:text-primary-foreground;
+}
+@utility ui-btn-secondary {
+  @apply bg-secondary text-secondary-foreground hover:opacity-70 active:bg-secondary/80 active:text-secondary-foreground;
+}
+@utility ui-btn-success {
+  @apply bg-success text-success-foreground hover:opacity-70 active:bg-success/80 active:text-success-foreground;
+}
+@utility ui-btn-warning {
+  @apply bg-warning text-warning-foreground hover:opacity-70 active:bg-warning/80 active:text-warning-foreground;
+}
+@utility ui-btn-danger {
+  @apply bg-danger text-danger-foreground hover:opacity-70 active:bg-danger/80 active:text-danger-foreground;
+}
+@utility ui-btn-accent {
+  @apply bg-accent text-accent-foreground hover:bg-primary/15 active:bg-accent/80 hover:text-primary active:text-accent-foreground;
+}
+@utility ui-btn-info {
+  @apply bg-info text-info-foreground hover:opacity-70 active:bg-info/80 active:text-info-foreground;
+}
+
+/* variants: outline */
+@utility ui-btn-outline {
+  @apply border border-border bg-background text-foreground
+    hover:border-primary/35 hover:text-primary hover:bg-primary/10;
+}
+
+/* variants: ghost */
+@utility ui-btn-ghost {
+  @apply bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground;
+}
+
+/* Form control primitives */
+@utility form-control {
+  @apply w-full rounded-md border border-border bg-background px-3 text-sm text-foreground shadow-sm
+    placeholder:text-muted-foreground
+    transition-[border-color,box-shadow] duration-150
+    disabled:pointer-events-none disabled:opacity-50
+    focus-ring;
+}
+
+@utility form-control-sm {
+  @apply h-8 text-xs;
+}
+@utility form-control-md {
+  @apply h-9;
+}
+@utility form-control-lg {
+  @apply h-10;
+}
+
+@utility form-control-hover {
+  @apply hover:border-foreground/20;
+}
+@utility form-control-invalid {
+  @apply border-danger/60 focus-visible:ring-danger;
+}
+@utility form-control-readonly {
+  @apply bg-muted/30 text-muted-foreground;
+}
+
+/* =========================================================
+   Components (semantic classes used in templates)
+   ========================================================= */
+@layer components {
+  .form-label {
+    @apply mb-1 block text-sm font-medium text-muted-foreground;
+  }
+
+  .form-input {
+    @apply form-control form-control-md form-control-hover;
+  }
+
+  .form-select {
+    @apply form-control form-control-md form-control-hover;
+  }
+
+  .form-checkbox {
+    @apply h-4 w-4 rounded border-border text-primary focus-ring;
+  }
+
+  .form-error {
+    @apply mt-1 text-sm text-danger;
+  }
+
+  /* Buttons (semantic API) */
+  .btn {
+    @apply ui-btn ui-btn-md;
+  }
+
+  /* solid */
+  .btn-primary {
+    @apply ui-btn ui-btn-md ui-btn-primary;
+  }
+  .btn-secondary {
+    @apply ui-btn ui-btn-md ui-btn-secondary;
+  }
+  .btn-success {
+    @apply ui-btn ui-btn-md ui-btn-success;
+  }
+  .btn-warning {
+    @apply ui-btn ui-btn-md ui-btn-warning;
+  }
+  .btn-danger {
+    @apply ui-btn ui-btn-md ui-btn-danger;
+  }
+  .btn-accent {
+    @apply ui-btn ui-btn-md ui-btn-accent;
+  }
+  .btn-info {
+    @apply ui-btn ui-btn-md ui-btn-info;
+  }
+
+  /* outline */
+  .btn-outline {
+    @apply ui-btn ui-btn-md ui-btn-outline;
+  }
+
+  /* ghost */
+  .btn-ghost {
+    @apply ui-btn ui-btn-md ui-btn-ghost;
+  }
+
+  /* link */
+  .btn-link {
+    @apply bg-transparent p-0 h-auto font-medium underline-offset-4 hover:underline focus-visible:ring-0;
+  }
+
+  /* sizes override */
+  .btn-sm {
+    @apply ui-btn-sm;
+  }
+  .btn-lg {
+    @apply ui-btn-lg;
+  }
+  .btn-icon {
+    @apply ui-btn-icon;
+  }
+}
+
+/* =========================================================
+   Standalone utilities (project-level)
+   ========================================================= */
+@layer utilities {
+  /* tone text (KPI / status text) */
+  .tone-good {
+    @apply text-success;
+  }
+  .tone-bad {
+    @apply text-danger;
+  }
+  .tone-neutral {
+    @apply text-foreground;
+  }
+  .tone-sub.tone-good {
+    @apply text-success/80;
+  }
+  .tone-sub.tone-bad {
+    @apply text-danger/80;
+  }
+  .tone-sub.tone-neutral {
+    @apply text-muted-foreground;
+  }
+
+  /* badge */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium border;
+  }
+  .badge-success {
+    @apply bg-success/10 text-success border-success/20;
+  }
+  .badge-danger {
+    @apply bg-danger/10 text-danger border-danger/20;
+  }
+  .badge-primary {
+    @apply bg-primary/10 text-primary border-primary/20;
+  }
+}

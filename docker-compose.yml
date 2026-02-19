@@ -1,0 +1,74 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    restart: on-failure
+    container_name: sqlserver
+    env_file:
+      - .env
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+    ports:
+      - "${MSSQL_HOST_PORT:-14330}:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "bash -lc 'cat < /dev/null > /dev/tcp/127.0.0.1/1433'"]
+      interval: 5s
+      timeout: 3s
+      retries: 60
+      start_period: 20s
+
+  sqlserver-init:
+    image: mcr.microsoft.com/mssql-tools
+    platform: linux/amd64
+    container_name: sqlserver-init
+    restart: "no"
+    env_file:
+      - .env
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    command:
+      - bash
+      - -lc
+      - |
+          set -e
+          mesg n 2>/dev/null || true
+
+          SQLCMD="/opt/mssql-tools18/bin/sqlcmd"
+          if [ ! -x "$$SQLCMD" ]; then SQLCMD="/opt/mssql-tools/bin/sqlcmd"; fi
+
+          echo "Using: $$SQLCMD"
+          echo "[init] creating $${MSSQL_DB:-devdb} (if not exists)..."
+
+          "$$SQLCMD" -b -l 30 -S sqlserver -U sa -P "$$MSSQL_SA_PASSWORD" \
+            -Q "IF DB_ID('$${MSSQL_DB:-devdb}') IS NULL CREATE DATABASE [$${MSSQL_DB:-devdb}];"
+
+          echo "[init] done"
+
+  api:
+    build:
+      context: ./backend
+    platform: linux/amd64
+    restart: on-failure
+    container_name: backend-api
+    env_file:
+      - .env
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      sqlserver-init:
+        condition: service_completed_successfully
+    environment:
+      - ENV=${ENV:-development}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM:-HS256}
+      - JWT_EXPIRE_MINUTES=${JWT_EXPIRE_MINUTES:-60}
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "${API_PORT:-8000}:8000"
+
+volumes:
+  sqlserver_data:
