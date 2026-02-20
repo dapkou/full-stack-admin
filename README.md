@@ -13,10 +13,10 @@ FastAPI + SQL Server + Vue 3
 -   Docker 化 SQL Server
 -   前後端分離開發與部署模式
 
-提供兩種執行模式，並透過 Makefile 統一操作流程。
+提供兩種執行模式：
 
 -   本機開發模式：只啟動 DB（Docker），前後端本機執行
--   整合測試模式：Backend + DB 皆在 Docker 中執行，前端本機執行
+-   整合測試模式（建議）：Backend + DB 皆在 Docker 中執行，前端本機執行
 
 ------------------------------------------------------------------------
 
@@ -49,19 +49,13 @@ FastAPI + SQL Server + Vue 3
 ## 環境需求
 
 -   Docker Desktop（含 Docker Compose）
+-   Node.js（LTS，本機執行 frontend 時需要）
 -   Python 3.12（本機執行 backend 時需要）
 -   Poetry
--   Node.js（LTS，本機執行 frontend 時需要）
 
-------------------------------------------------------------------------
-
-## 系統架構
-
-Frontend（Vue 3，本機）
-↓
-Backend（FastAPI，本機或 Docker）
-↓
-SQL Server 2022（Docker）
+補充：
+- 若使用「整合測試模式」，本機不需要安裝 Python / Poetry
+- Windows 預設沒有 `make`，請直接使用 `docker compose` 指令
 
 ------------------------------------------------------------------------
 
@@ -83,38 +77,67 @@ SQL Server 2022（Docker）
 
 ------------------------------------------------------------------------
 
-## 快速開始（首次使用）
+## 快速開始（整合測試模式，建議）
 
-1. 複製 example.env 為 .env
-2. 複製 frontend/example.env 為 frontend/.env
-3. 設定 DATABASE_URL（依執行模式擇一）
-4. 依下方執行模式啟動專案
+### 方法 A：使用 Makefile（有安裝 make 的環境）
+
+```bash
+cp example.env .env
+cp frontend/example.env frontend/.env
+
+make up-all      # 啟動 Backend + DB（Docker）
+make fe          # 啟動 Frontend（本機）
+```
+
+### 方法 B：使用 Docker Compose（Windows 建議）
+
+```bash
+cp example.env .env
+cp frontend/example.env frontend/.env
+
+docker compose up -d --build
+
+cd frontend
+npm install
+npm run dev
+```
+
+啟動後可確認容器狀態：
+
+```bash
+docker compose ps
+```
+
+開啟： 
+- API: http://localhost:8000 
+- Swagger: http://localhost:8000/docs
 
 ------------------------------------------------------------------------
 
-# 執行模式
-
-------------------------------------------------------------------------
-
-## 1)  本機開發模式（DB in Docker）
-
-僅啟動 SQL Server（Docker），前後端在本機執行。
+## 本機開發模式（DB in Docker）
 
 ### Step 1 — 啟動資料庫（Docker）
 
-``` bash
+```bash
 make up
+```
+
+或：
+
+```bash
+docker compose up -d sqlserver
+docker compose up -d --no-deps --force-recreate sqlserver-init
 ```
 
 ### Step 2 — 啟動後端（本機）
 
-``` bash
+```bash
 make be
 ```
 
 或：
 
-``` bash
+```bash
 cd backend
 poetry install
 poetry run uvicorn src.main:app --reload
@@ -122,53 +145,17 @@ poetry run uvicorn src.main:app --reload
 
 ### Step 3 — 啟動前端（本機）
 
-``` bash
+```bash
 make fe
 ```
 
 或：
 
-``` bash
+```bash
 cd frontend
 npm install
 npm run dev
 ```
-
-### 連線資訊
-
-  服務         位址
-  ------------ ----------------------------
-  API          http://localhost:8000
-  Swagger      http://localhost:8000/docs
-  SQL Server   localhost:14330
-
-------------------------------------------------------------------------
-
-## 2) 整合測試模式（Backend + DB in Docker）
-
-### Step 1 — 啟動 Backend + DB（Docker）
-
-``` bash
-make up-all
-```
-
-### Step 2 — 啟動前端（本機）
-
-``` bash
-make fe
-```
-
-### 連線資訊
-
-  服務                     位址
-  ------------------------ ----------------------------
-  API                      http://localhost:8000
-  Swagger                  http://localhost:8000/docs
-  SQL Server（主機存取）   localhost:14330
-
-容器內部連線：
-
-    sqlserver:1433
 
 ------------------------------------------------------------------------
 
@@ -209,13 +196,25 @@ JWT_ALGORITHM=HS256
 JWT_EXPIRE_MINUTES=60
 ```
 
+注意： 
+- 同名環境變數請勿重複宣告（Docker Compose 會以最後出現的值為準） 
+- 修改 `MSSQL_SA_PASSWORD` 後需執行 `docker compose down -v` 才會生效
+
 ------------------------------------------------------------------------
 
 ## DATABASE_URL 設定（依執行模式擇一）
 
-請依你使用的啟動方式設定 `DATABASE_URL`。
+### 整合測試模式（建議）
 
-### 本機開發模式（make up + make be）
+使用 sqlserver：
+
+``` env
+DATABASE_URL=mssql+pyodbc://sa:password@sqlserver:1433/devdb?driver=ODBC+Driver+18+for+SQL+Server&Encrypt=yes&TrustServerCertificate=yes
+```
+
+整合測試模式下，`DATABASE_URL` host 必須為 `sqlserver`。
+
+### 本機開發模式
 
 使用 localhost：
 
@@ -223,21 +222,13 @@ JWT_EXPIRE_MINUTES=60
 DATABASE_URL=mssql+pyodbc://sa:password@localhost:14330/devdb?driver=ODBC+Driver+18+for+SQL+Server&Encrypt=yes&TrustServerCertificate=yes
 ```
 
-### 整合測試模式（make up-all）
-
-使用容器名稱 sqlserver：
-
-``` env
-DATABASE_URL=mssql+pyodbc://sa:password@sqlserver:1433/devdb?driver=ODBC+Driver+18+for+SQL+Server&Encrypt=yes&TrustServerCertificate=yes
-```
+本模式下 `DATABASE_URL` host 必須為 `localhost`。
 
 若連線錯誤，請確認目前執行模式與 DATABASE_URL 中的 host 是否一致（localhost 或 sqlserver）。
 
 ------------------------------------------------------------------------
 
 ## frontend/.env
-
-請將 `frontend/example.env` 複製為 `frontend/.env`。
 
 ``` env
 VITE_API_BASE_URL=http://localhost:8000
@@ -250,19 +241,14 @@ VITE_APP_NAME=股市會員系統
 
 ### 修改 sa 密碼
 
-SQL Server 的 `sa` 密碼在第一次初始化時會寫入 volume。
-若需套用新密碼（會清空資料）：
-
-``` bash
+```bash
 docker compose down -v
 docker compose up -d --build
 ```
 
 ### 密碼含特殊字元
 
-`! @ : /` 等字元需使用 URL encoding。
-
-例如：
+`! @ : /` 等字元需使用 URL encoding，例如：
 
     ChangeMe123! → ChangeMe123%21
 
@@ -274,24 +260,17 @@ docker compose up -d --build
 
 ### Accounts
 
-  Method   Path
-  -------- ---------------------------
-  POST     /api/v1/accounts/register
-  POST     /api/v1/accounts/login
-  GET      /api/v1/accounts/me
+-   POST /api/v1/accounts/register
+-   POST /api/v1/accounts/login
+-   GET /api/v1/accounts/me
 
 ### Stocks
 
-  Method   Path
-  -------- ----------------
-  GET      /api/v1/stocks
+-   GET /api/v1/stocks
 
 ------------------------------------------------------------------------
 
-## 專案反思與改進方向
+### 前後端詳細說明請參考：
 
-本專案以完成測試需求與前後端整合穩定性為優先，架構設計以清晰與可維護為核心原則，避免過度複雜化。
-
-其他技術細節與模組說明請參考：
 -   /backend/README.md
 -   /frontend/README.md
