@@ -143,14 +143,14 @@ async function onLogout() {
 
             <template #dropdown>
               <el-dropdown-menu class="app-dropdown-menu w-32">
-                <el-dropdown-item
+                <!-- <el-dropdown-item
                   v-if="showSettings"
                   class="app-dropdown-item"
                   @click="goSettings"
                 >
                   <Settings class="h-4 w-4" />
                   <span class="ml-2">設定</span>
-                </el-dropdown-item>
+                </el-dropdown-item> -->
 
                 <el-dropdown-item
                   class="app-dropdown-item app-dropdown-item--danger"

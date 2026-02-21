@@ -29,17 +29,34 @@ Vue 3 + TypeScript + Vite
 
 ## 技術選擇說明
 
-### Tailwind CSS
+### 1. UI 架構
 
--   控制 spacing / 排版 / grid / 色彩系統
--   建立一致的設計 token，避免樣式散落
--   降低覆寫 UI library 樣式成本
+#### Tailwind CSS（視覺層）
 
-### Element Plus
+-   負責 spacing、排版、Grid 與語意色彩
+-   作為設計 Token 的使用層
+-   避免樣式散落與覆寫成本過高
 
--   表單驗證與常用互動元件（Dialog / Message 等）
--   Table / Pagination 等資料型元件
--   提升資料介面的開發效率與一致性
+#### Element Plus（互動層）
+
+-   提供表單驗證與常用互動元件（Dialog / Message 等）
+-   提供 Table / Pagination 等資料型元件
+-   提升資料介面開發效率與一致性
+
+------------------------------------------------------------------------
+
+### 2. 設計系統整合
+
+本專案以 **CSS Variables 作為設計 Token 核心來源**，
+並讓 Tailwind 與 Element Plus 共用同一套色彩系統。
+
+-   Dark Mode 僅需切換 .dark
+-   所有元件（UI Library + 自訂元件）主題一致
+-   降低樣式覆寫與維護成本
+
+------------------------------------------------------------------------
+
+### 3. 驗證與錯誤處理策略
 
 ### JWT（Access Token）
 
@@ -52,6 +69,7 @@ Vue 3 + TypeScript + Vite
 -   避免在各頁面重複撰寫錯誤處理與導頁邏輯
 
 ------------------------------------------------------------------------
+
 ### 架構設計說明
 
 ### 狀態管理
@@ -80,50 +98,18 @@ auth 拆分為：
 
 ```text
 frontend/
-├─ example.env              # 複製為 .env 使用
-├─ index.html
-├─ package.json
-├─ postcss.config.js
-├─ tailwind.config.ts
-├─ vite.config.ts
+├─ example.env              # 環境變數範例（請複製為 .env）
 └─ src/
    ├─ main.ts
    ├─ App.vue
-   ├─ env.d.ts
-   ├─ index.css
-   ├─ styles/
-   │  └─ element-plus-vars.css
-   ├─ navigation/ 
-   │  ├─ iconMap.ts
-   │  └─ buildSidebar.ts
-   ├─ api/
-   │  ├─ http.ts
-   │  ├─ accounts.ts
-   │  └─ stocks.ts
-   ├─ stores/
-   │  ├─ auth-state.ts
-   │  ├─ auth.ts
-   │  ├─ auth-session.ts
-   │  └─ theme.ts
-   ├─ layouts/
-   │  ├─ Main.vue
-   │  ├─ Header.vue
-   │  └─ Sidebar.vue
-   ├─ views/
-   │  ├─ auth/
-   │  │  ├─ LoginView.vue
-   │  │  ├─ RegisterView.vue
-   │  │  └─ components/
-   │  ├─ stocks/
-   │  │  └─ StocksListView.vue
-   │  ├─ account/
-   │  │  └─ SettingsView.vue
-   │  └─ DashboardView.vue
-   ├─ components/
-   │  ├─ AppCard.vue
-   │  └─ AppDialog.vue
-   └─ router/
-      └─ index.ts
+   ├─ api/                  # 後端 API 呼叫
+   ├─ stores/               # 全域狀態管理（登入狀態 / 主題）
+   ├─ router/               # 路由與 Route Guard
+   ├─ layouts/              # 版型結構（Header / Sidebar）
+   ├─ views/                # 頁面層
+   ├─ components/           # 可重用 UI 元件
+   ├─ navigation/           # 動態選單邏輯
+   └─ styles/               # 全域樣式與主題（Design Tokens）
 ```
 
 ------------------------------------------------------------------------
