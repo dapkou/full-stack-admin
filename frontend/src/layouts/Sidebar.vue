@@ -19,7 +19,7 @@ type Props = {
   sidebarOpen: boolean;
   navItems: NavItem[];
   expandedMenus: string[];
-  onToggleMenu: (label: string) => void;
+  onToggleMenu: (label: string) => void; // 不要回傳結果
   onToggle: () => void;
   isActive: (path: string) => boolean;
 
@@ -29,7 +29,10 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+
+// Tailwind 的 lg 斷點（1024px）
 const isMobile = () => window.matchMedia("(max-width: 1023px)").matches;
+
 const asideClass = computed(() =>
   clsx(
     // base

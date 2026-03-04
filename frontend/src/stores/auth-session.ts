@@ -2,6 +2,7 @@ import router from "@/router";
 import { clearToken } from "@/api/http";
 import { authState } from "@/stores/auth-state";
 
+// 避免同時觸發多次 redirect
 let handling = false;
 
 // 登入逾時、登出

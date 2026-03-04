@@ -14,13 +14,6 @@ import { ElMessage } from "element-plus";
 import { setOnAuthExpired } from "@/api/http";
 import { endSession } from "@/stores/auth-session";
 
-type ThemeMode = "light" | "dark";
-
-function initTheme() {
-  const saved = (localStorage.getItem("theme") as ThemeMode | null) ?? "light";
-  document.documentElement.classList.toggle("dark", saved === "dark");
-}
-
 let lastAuthExpiredAt = 0;
 
 setOnAuthExpired(() => {
@@ -36,7 +29,5 @@ setOnAuthExpired(() => {
 
   endSession("expired");
 });
-
-initTheme();
 
 createApp(App).use(router).use(ElementPlus, { locale: zhTw }).mount("#app");

@@ -76,9 +76,9 @@ Vue 3 + TypeScript + Vite
 
 auth 拆分為：
 
-- `auth-state.ts` → 純狀態
-- `auth.ts` → 登入 / 檢查
-- `auth-session.ts` → session 結束處理
+- `auth-state.ts` → 全域登入狀態
+- `auth.ts` → 登入流程
+- `auth-session.ts` → 結束登入狀態
 
 ### Navigation
 

@@ -1,9 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import LoginView from "@/views/auth/LoginView.vue";
-import RegisterView from "@/views/auth/RegisterView.vue";
-import DashboardView from "@/views/DashboardView.vue";
-import MainLayout from "@/layouts/Main.vue";
-
 import { checkAuth } from "@/stores/auth";
 import { authState } from "@/stores/auth-state";
 import { getToken } from "@/api/http";
@@ -14,18 +9,18 @@ const router = createRouter({
     {
       path: "/login",
       name: "login",
-      component: LoginView,
+      component: () => import("@/views/auth/LoginView.vue"),
       meta: { public: true },
     },
     {
       path: "/register",
       name: "register",
-      component: RegisterView,
+      component: () => import("@/views/auth/RegisterView.vue"),
       meta: { public: true },
     },
     {
       path: "/",
-      component: MainLayout,
+      component: () => import("@/layouts/Main.vue"),
       meta: { requiresAuth: true },
       children: [
         { path: "", redirect: { name: "dashboard" }, meta: { hidden: true } },
@@ -38,7 +33,7 @@ const router = createRouter({
         {
           path: "dashboard",
           name: "dashboard",
-          component: DashboardView,
+          component: () => import("@/views/DashboardView.vue"),
           meta: { sidebar: { label: "Dashboard", icon: "LayoutDashboard" } },
         },
         {
@@ -52,12 +47,16 @@ const router = createRouter({
   ],
 });
 
+// 用來避免同時間重複呼叫 checkAuth 
 let checking: Promise<any> | null = null;
 
 router.beforeEach(async (to) => {
+  // 公開頁面
   const isPublic = to.matched.some((r) => Boolean(r.meta.public));
+  // 需要驗證
   const requiresAuth = to.matched.some((r) => Boolean(r.meta.requiresAuth));
 
+  // 公開頁或不需登入
   if (isPublic || !requiresAuth) return true;
 
   const token = getToken();
@@ -69,6 +68,7 @@ router.beforeEach(async (to) => {
 
   console.log("checking auth", to.fullPath);
 
+  // 避免重複請求
   if (!checking) {
     console.log("[guard] checkAuth()");
     checking = checkAuth()
@@ -77,6 +77,7 @@ router.beforeEach(async (to) => {
       .finally(() => (console.log("[guard] done"), (checking = null)));
   }
 
+  // 等待驗證結果
   let me = null;
   try {
     me = await checking;

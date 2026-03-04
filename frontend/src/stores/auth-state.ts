@@ -6,6 +6,7 @@ export type AuthState = {
   isChecking: boolean;
 };
 
+// 登入狀態
 export const authState = reactive<AuthState>({
   user: null,
   isChecking: false,
